@@ -67,3 +67,66 @@
 (setq L `(1 2 (+ 1 2)))
 
 #+end_src
+
+
+
+
+** vectors
+
+#+begin_src emacs-lisp
+
+(setq v [1 2 3])
+(setq v [1 2 (+ 1 2)])
+
+(setq v (vector 1 2 (+ 1 2)))
+
+(elt v 1)
+
+(aref v 1)
+
+#+end_src
+
+
+** a-list
+
+associative list
+#+begin_src emacs-lisp
+
+(setq A '( (a . 1) (b . 2) (c . 3) ))
+
+(cdr (assoc 'a A))
+(cdr (assoc 'b A))
+
+(car (rassoc 2 A))
+
+;; not really a dictionary
+(setq A '( (a . 1) (b . 2) (c . 3) (c . 4) ))
+(cdr (assoc 'c A))
+
+(setq A '( (a . 1) (b . 2) (c . 3) (d . 2) ))
+(car (rassoc 2 A))
+#+end_src
+** p-list
+
+#+begin_src emacs-lisp
+(setq P '(:a 1 :b 2 :c 3))
+P
+
+(plist-get P :b)
+
+;; not really a dictionary
+(setq P '(:a 1 :b 2 :c 3 :c 4))
+(plist-get P :c)
+
+#+end_src
+
+** hash table
+
+#+begin_src emacs-lisp
+(setq h #s(hash-table data (a 1 b 2 c 3)))
+(gethash 'c h)
+
+(setq h #s(hash-table data (a 1 b 2 c 3 c 4)))
+(gethash 'c h)
+
+#+end_src
