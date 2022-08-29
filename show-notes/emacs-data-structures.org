@@ -1,0 +1,69 @@
+#+title: Emacs Data Structures
+
+
+* resources
+- [[https://www.youtube.com/watch?v=HyFbIWvmV0A][john kitchin - scimax - data structures in emacs-lisp]]
+
+* Data Structures
+
+** string
+
+#+begin_src emacs-lisp
+
+(setq S "123")
+(substring S 1)
+(substring S 1 2)
+
+#+end_src
+
+** list
+
+#+begin_src emacs-lisp
+
+'(a b c)
+
+(setq L '(1 2 3))
+
+(car L)
+(cl-first L)
+(cl-second L)
+
+(nth 0 L)
+(nth 1 L)
+(elt L 1)
+
+
+(con L)
+
+#+end_src
+
+
+#+begin_src emacs-lisp
+(cl-second L)
+#+end_src
+
+
+#+begin_src emacs-lisp
+
+(car L)
+(cdr L)
+
+(last L) ;; a bit confusing as it returns last element as a list. use car to get it out
+(car (last L))
+
+(butlast L)
+
+#+end_src
+
+
+
+#+begin_src emacs-lisp
+
+(setq L '(1 2 (+ 1 2)))
+
+(setq L (list 1 2 (+ 1 2)))
+
+# or use back quote
+(setq L `(1 2 (+ 1 2)))
+
+#+end_src
