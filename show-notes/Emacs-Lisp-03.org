@@ -214,6 +214,10 @@ The form =(interactive)= needs to be the first one in the function definition!
     (interactive)
     (message "Hey, it worked!"))
 
+  (defun my-second-command()
+    (interactive)
+    (message "That worked as well!"))
+
 #+end_src
 
 Invoke it using =M-x=!
@@ -338,7 +342,7 @@ Let's look at a couple other examples:
 
 #+end_src
 
-* A real example!
+* COMMENT A real example!
 
 Let's define the project we'll be following for the rest of the series:
 
@@ -348,11 +352,38 @@ Let's define the project we'll be following for the rest of the series:
 
 Today we'll define a command that automatically tangles the =.org= files in your dotfiles folder.
 
+
+#+begin_src emacs-lisp
+
+(setq dotfiles-folder "~/scm/r/labs/poke-emacs")
+(setq dotfiles-org-files '("Desktop.org" "Emacs.org"))
+
+(defun dotfiles-tangle-org-file(&optional org-file)
+  "Tangles a single .org file relative to the path in
+dotfiles-folder.  If no file is specified, tangle the current
+file if it is an org-mode buffer inside of dotfiles-folder."
+  (interactive "F")
+  ;; (message org-file)
+    (org-babel-tangle-file (expand-file-name org-file dotfiles-folder))
+
+                )
+
+(defun dotfiles-tangle-org-files ()
+
+  (dolist (org-file dotfiles-org-files)
+
+    ;; (message (expand-file-name org-file dotfiles-folder) )
+    ;; (org-babel-tangle-file (expand-file-name org-file dotfiles-folder))
+
+  ))
+
+#+end_src
+
 ** Finished code
 
 #+begin_src emacs-lisp
 
-  (setq dotfiles-folder "~/Projects/Code/emacs-from-scratch")
+  (setq dotfiles-folder "~/scm/r/projects/Code/poke-emacss")
   (setq dotfiles-org-files '("Emacs.org" "Desktop.org"))
 
   (defun dotfiles-tangle-org-file (&optional org-file)
