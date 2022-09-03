@@ -364,18 +364,25 @@ dotfiles-folder.  If no file is specified, tangle the current
 file if it is an org-mode buffer inside of dotfiles-folder."
   (interactive "F")
   ;; (message org-file)
-    (org-babel-tangle-file (expand-file-name org-file dotfiles-folder))
+  ;; (org-babel-tangle-file org-file)
 
-                )
+  ;; Suppress prompts and messages
+    (let ((org-confirm-babel-evaluate nil)
+          (message-log-max nil)
+          (inhibit-message t))
+  (org-babel-tangle-file (expand-file-name org-file dotfiles-folder)))
+  )
 
 (defun dotfiles-tangle-org-files ()
+  "Tangles all of the .org files in the paths specified by the variable dotfiles-folder"
+  (interactive)
 
   (dolist (org-file dotfiles-org-files)
-
     ;; (message (expand-file-name org-file dotfiles-folder) )
     ;; (org-babel-tangle-file (expand-file-name org-file dotfiles-folder))
-
-  ))
+    (dotfiles-tangle-org-file org-file))
+  (message "Dotfiles are up to date!")
+  )
 
 #+end_src
 
@@ -383,7 +390,7 @@ file if it is an org-mode buffer inside of dotfiles-folder."
 
 #+begin_src emacs-lisp
 
-  (setq dotfiles-folder "~/scm/r/projects/Code/poke-emacss")
+  (setq dotfiles-folder "~/scm/r/labs/Code/poke-emacss")
   (setq dotfiles-org-files '("Emacs.org" "Desktop.org"))
 
   (defun dotfiles-tangle-org-file (&optional org-file)

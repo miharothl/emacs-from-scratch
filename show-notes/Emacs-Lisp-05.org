@@ -154,12 +154,12 @@ You can also find a buffer that represents a particular file (or file path) usin
 
 #+begin_src emacs-lisp
 
-  (setq dotcrafter-org-files '("Emacs.org" "Desktop.org" "Systems.org"))
+  (setq dotcrafter-org-files '("Emacs.org" "Desktop.org" ))
+  (setq dotcrafter-dotfiles-folder "~/scm/r/labs/poke-emacs")
 
   (dolist (org-file dotcrafter-org-files)
-    (with-current-buffer (get-file-buffer (expand-file-name org-file
-                                                            dotcrafter-dotfiles-folder))
-      (message "File: %s" (buffer-file-name))))
+    (with-current-buffer (get-file-buffer (expand-file-name org-file dotcrafter-dotfiles-folder) )
+       (message "File: %s" (buffer-file-name))))
 
 #+end_src
 
@@ -190,6 +190,9 @@ A couple of interesting details:
 We can use =find-file-noselect= to create a buffer for the file if it doesn't already exist:
 
 #+begin_src emacs-lisp
+(setq dotcrafter-org-files '("Emacs.org" "Desktop.org" "test1.org"))
+(setq dotcrafter-dotfiles-folder "~/scm/r/labs/poke-emacs")
+
 
   (dolist (org-file dotcrafter-org-files)
     (let ((file-path (expand-file-name org-file
@@ -199,6 +202,47 @@ We can use =find-file-noselect= to create a buffer for the file if it doesn't al
         (message "File: %s" (buffer-file-name)))))
 
 #+end_src
+
+
+#+begin_src emacs-lisp
+
+(setq dotcrafter-org-files '("Emacs.org" "Desktop.org" "test1.org"))
+(setq dotcrafter-dotfiles-folder "~/scm/r/labs/poke-emacs")
+
+;; (expand-file-name "custom.el" dotcrafter-dotfiles-folder)
+
+;; (with-current-buffer "*Messages*"
+;;   (current-buffer)
+;;   (buffer-file-name)
+;;   )
+
+;; (setq file-path "/Users/rothlmi/scm/r/labs/poke-emacs/Desktop.org")
+;; (get-file-buffer file-path)
+;; (find-file-noselect file-path)
+
+(defun debug-me ()
+  (dolist (org-file dotcrafter-org-files)
+    (progn
+      (let ((file-path
+             (expand-file-name org-file dotcrafter-dotfiles-folder)
+           ))
+        (message file-path)
+
+        (with-current-buffer (or (get-file-buffer file-path)
+                                 (find-file-noselect file-path))
+          (message "File: %s" (buffer-file-name))
+          )
+      )
+      (message org-file)
+    )
+  )
+)
+
+(debug-me)
+
+
+#+end_src
+
 
 * What's the point?
 
@@ -295,8 +339,11 @@ You can also get a substring of text in the buffer between two points using =buf
 
 #+begin_src emacs-lisp
 
+  (point);; :-)
+
   (buffer-substring 9328 9349)
   (buffer-substring-no-properties 9328 9349)
+  (buffer-substring-no-properties 10818 10833)
 
 #+end_src
 
@@ -380,6 +427,85 @@ Now we can finally do something useful in our code!  Let's write some Emacs Lisp
     output-files)
 
 #+end_src
+
+
+#+begin_src emacs-lisp
+
+(defun r--log (msg)
+  (message msg)
+  )
+;; test
+(r--log "test")
+
+
+(defun r--get-buffer (org-file)
+
+  (or (get-file-buffer org-file)
+      (find-file-noselect org-file)
+      )
+  )
+;; test
+(r--get-buffer "~/scm/r/labs/poke-emacs/Emacs.org")
+
+(defun r-scan-for-output-files (org-file)
+  (let ((output-files '())
+        (current-match t))
+
+    (with-current-buffer (r--get-buffer org-file)
+
+      (r--log buffer-file-name)
+
+      (save-excursion
+        (goto-char (point-min))
+        (r-log (number-to-string (point)))
+
+        (while current-match
+          (setq current-match (search-forward ":tangle " nil t))
+          (when current-match
+            (r-log "found match")
+
+            (let ((output-file (thing-at-point 'filename t)))
+
+              (unless (or (not output-file)
+                         (string-equal output-file "no"))
+                (setq output-files (cons output-file
+                                        output-files))
+                )
+              )
+            )
+          )
+        )
+      )
+      output-files
+    )
+  )
+;;test
+(r-scan-for-output-files "~/scm/r/labs/poke-emacs/Desktop.org")
+
+(setq r-org-files '("Emacs.org" "Desktop.org" "test1.org"))
+(setq r-dotfiles-folder "~/scm/r/labs/poke-emacs")
+
+(defun r-traverse-org-files ()
+  (let ((result))
+    (dolist (org-file r-org-files)
+
+      (r-log org-file)
+      ;; (expand-file-name org-file r-dotfiles-folder)
+      ;; (push org-file result)
+      ;; (push (expand-file-name org-file r-dotfiles-folder) result)
+      (push (r-scan-for-output-files (expand-file-name org-file r-dotfiles-folder)) result)
+
+      )
+
+    (flatten-tree result)
+    )
+  )
+;;test
+(r-traverse-org-files)
+
+#+end_src
+
+
 
 * Inserting text
 

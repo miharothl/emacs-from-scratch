@@ -31,6 +31,9 @@ We usually do this with =setq=:
 
   (setq tab-width 4)
 
+'tab-width ;; tabwidth
+tab-width  ;; 4
+
 #+end_src
 
 But what is this really doing?
@@ -62,6 +65,8 @@ The variable does not have to exist or be pre-defined!
   (setq mouse-wheel-follow-mouse 't)
   (setq scroll-step 1)
   (setq use-dialog-box nil))
+
+
 
 #+end_src
 
@@ -202,6 +207,8 @@ Global variables are great for two things:
 Sometimes you just need to define a variable temporarily without "polluting" the global scope.  For example:
 
 #+begin_src emacs-lisp
+
+  (require 'cl)
 
   (setq x 0)
 
@@ -370,7 +377,13 @@ The =defcustom= function allows you to define a customizable variable:
   (defcustom my-custom-variable 42
     "A variable that you can customize")
 
+  (defvar my-custom-variable-42 42
+    "A variable that you can't customize")
+
 #+end_src
+
+#+RESULTS:
+: my-custom-variable-42
 
 =defcustom= takes some additional parameters after the documentation string:
 
